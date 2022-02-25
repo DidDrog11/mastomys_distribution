@@ -1,0 +1,30 @@
+if (!require("pacman")) install.packages("pacman")
+pkgs =
+  c("here",
+    "tidyverse",
+    "magrittr",
+    "bib2df",
+    "googledrive",
+    "readxl",
+    "countrycode",
+    "ggspatial",
+    "googledrive",
+    "sf",
+    "tmap",
+    "cowplot",
+    "raster",
+    "terra",
+    "mapview",
+    "ggmap",
+    "leaflet",
+    "RColorBrewer",
+    "lubridate",
+    "gt",
+    "gtsummary",
+    "gridExtra",
+    "lubridate",
+    "scales",
+    "embarcadero",
+    "reshape"
+  )
+pacman::p_load(pkgs, character.only = T)
