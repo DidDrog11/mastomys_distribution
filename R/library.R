@@ -13,6 +13,7 @@ pkgs =
     "tmap",
     "cowplot",
     "raster",
+    "rasterVis",
     "terra",
     "mapview",
     "ggmap",

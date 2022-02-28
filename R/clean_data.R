@@ -65,6 +65,7 @@ m_nat_absence <- m_nat_gps %>%
   select(-number)
 
 # Convert GBIF data to presence only and remove non-WA countries
+
 gbif_presence <- gbif_data %>%
   select(species, country = countryCode, x = decimalLongitude, y = decimalLatitude) %>%
   mutate(iso3c = countrycode(country, "iso2c", "iso3c")) %>%
