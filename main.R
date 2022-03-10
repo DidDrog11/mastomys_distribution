@@ -13,3 +13,7 @@ source(here("R", "load_data.R"))
 # clean data
 
 source(here("R", "clean_data.R"))
+
+# combine data and prepare analysis
+
+source(here("R", "prep_analysis.R"))

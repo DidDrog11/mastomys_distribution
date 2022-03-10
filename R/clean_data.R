@@ -73,3 +73,7 @@ gbif_presence <- gbif_data %>%
   st_as_sf(coords = c("x", "y"), remove = FALSE) %>%
   mutate(m_nat = 1) %>%
   select(species, iso3c, geometry, x, y, m_nat)
+
+# Combine m_nat_presence and gbif_presence
+
+combined_presence <- bind_rows(m_nat_presence, gbif_presence)
