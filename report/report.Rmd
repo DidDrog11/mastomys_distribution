@@ -1,0 +1,23 @@
+---
+title: "Mapping *Mastomys Natalensis* with BART and INLA-SPDE to identify the geographic hotspots of increased hazard of Lassa fever epidemics"
+output: html_document
+author: "David Simons"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+# Introduction
+
+Lassa fever is a zoonotic infectious disease endemic to West Africa, the commensal rodent species *Mastomys natalensis* is identified as the primary reservoir species. *Mastomys natalensis* is considered to be present in most continental West African countries (with the exception of Gambia) and has been reported present in all other sub-Saharan states. However, the distribution of this rodent species within these countries is likely heterogenous, with rodent populations concentrated around areas of human habitation. 
+
+# Methods
+
+## Environmental variable selection
+
+Variable selection was influenced by prior publications on *Mastomys natalensis* distributions and Lassa fever spillover risk. These variables included Annual precipitation, Land use (as proportion of land type at the cell), Highest precipitation in the wettest month, Minimum temperature of the coldest month, Elevation, Mean temperature of the coldest quarater, Annual mean temperature, Temperature annual range, NDVI contingency, NDVI constancy, NDVI coefficient of variation (NDVI measures described using Collwell's indices), Human population density and Human settlement presence.

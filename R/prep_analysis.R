@@ -95,15 +95,37 @@ combined_cov <- bind_rows(pres_cov, abs_cov) %>%
   select(-ID, -pop_density)
 # And remove any with missing data, dummy coding landuse and transforming pop_density to log
 
-
 # First model
-xvars <- names(combined_cov)[!(names(combined_cov) %in% c('m_nat'))]
+all_vars <- names(combined_cov)[!(names(combined_cov) %in% c('m_nat'))]
 
 combined_cov <- as.data.frame(combined_cov)
 
+# Produce the prediction raster, requiring dummy coding of land use, conversion to log10_pop_density, removal of ID variable
+land_cover_dummy_rast <- covariate_raster[["land_cover"]] %>%
+  reclassify(simplified_landuse, include.lowest = TRUE) %>%
+  layerize()
+
+names(land_cover_dummy_rast) <- all_vars[str_detect(all_vars, "land_cover")]
+
+prediction_raster <- subset(covariate_raster, c(1:21, 23:35))
+prediction_raster$log_pop_density <- log10(prediction_raster$pop_density)
+
+prediction_raster <- stack(prediction_raster, stack(land_cover_dummy_rast))
+
+
+# Run model ---------------------------------------------------------------
+
 # Automated variable selection
-sdm <- bart.step(x.data = combined_cov[ ,xvars],
+sdm <- bart.step(x.data = combined_cov[ ,all_vars],
                  y.data = combined_cov[, "m_nat"],
                  full = TRUE,
                  quiet = TRUE)
 write_rds(sdm, here("tmp", "sdm.rds"))
+
+
+# Predict -----------------------------------------------------------------
+
+m_nat_layer <- predict(object = sdm,
+                       x.layers = prediction_raster,
+                       quantiles = c(0.025, 0.975),
+                       splitby = 20)

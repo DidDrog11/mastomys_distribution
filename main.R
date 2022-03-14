@@ -17,3 +17,11 @@ source(here("R", "clean_data.R"))
 # combine data and prepare analysis
 
 source(here("R", "prep_analysis.R"))
+
+# run the models
+
+source(here("R", "run_models.R"))
+
+# produce predictive maps
+
+source(here("R", "produce_predictions.R"))

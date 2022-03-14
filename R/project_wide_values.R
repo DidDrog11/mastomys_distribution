@@ -36,3 +36,31 @@ classification_raster <- matrix(c(0, 0, 0, # no data
                                   202, 255, 26), # water
                                 ncol = 3, byrow = TRUE)
 
+simplified_landuse <- matrix(c(0, 0, # no data
+                               1, 1,
+                               2, 1,
+                               3, 1,
+                               4, 1,
+                               5, 1,
+                               6, 1, # 1-6 become agriculture (1)
+                               7, 2,
+                               8, 2,
+                               9, 2,
+                               10, 2,
+                               11, 2, # 7-11 become forest (2)
+                               12, 3, # grassland (3)
+                               13, 4,
+                               14, 4,
+                               15, 4, # 13-15 become shrubland (4)
+                               16, 3, # grassland (3)
+                               17, 5,
+                               18, 5,
+                               19, 5, # 16-19 become sparse_vegetation (5)
+                               20, 2,
+                               21, 2, # forest (2)
+                               22, 6, # wetland (6)
+                               23, 7, # urban (7)
+                               24, 8, 
+                               25, 8, # 24-25 bare areas (8)
+                               26, 9), # water (9)
+                               ncol = 2, byrow = TRUE)
