@@ -1,6 +1,6 @@
 # set
 
-terra_raster <- rast(covariate_raster)
+terra_raster <- covariate_raster
 
 # Trapping presence
 # Thinning to a single point per raster cell
@@ -67,9 +67,9 @@ tmp_st_presence <- st_as_sf(pts_combined)
 tmp_st_absence <- tmp_st_absence %>%
   filter(!geometry %in% tmp_st_presence$geometry)
 
-rm(list = c("tmp_st_absence", "tmp_st_presence"))
-
 pts_m_nat_absence <- vect(tmp_st_absence)
+
+rm(list = c("tmp_st_absence", "tmp_st_presence"))
 
 n_additional_points <- nrow(pts_combined) - nrow(pts_m_nat_absence)
   
@@ -94,38 +94,3 @@ combined_cov <- bind_rows(pres_cov, abs_cov) %>%
   dummy_cols(select_columns = "land_cover", remove_selected_columns = TRUE) %>%
   select(-ID, -pop_density)
 # And remove any with missing data, dummy coding landuse and transforming pop_density to log
-
-# First model
-all_vars <- names(combined_cov)[!(names(combined_cov) %in% c('m_nat'))]
-
-combined_cov <- as.data.frame(combined_cov)
-
-# Produce the prediction raster, requiring dummy coding of land use, conversion to log10_pop_density, removal of ID variable
-land_cover_dummy_rast <- covariate_raster[["land_cover"]] %>%
-  reclassify(simplified_landuse, include.lowest = TRUE) %>%
-  layerize()
-
-names(land_cover_dummy_rast) <- all_vars[str_detect(all_vars, "land_cover")]
-
-prediction_raster <- subset(covariate_raster, c(1:21, 23:35))
-prediction_raster$log_pop_density <- log10(prediction_raster$pop_density)
-
-prediction_raster <- stack(prediction_raster, stack(land_cover_dummy_rast))
-
-
-# Run model ---------------------------------------------------------------
-
-# Automated variable selection
-sdm <- bart.step(x.data = combined_cov[ ,all_vars],
-                 y.data = combined_cov[, "m_nat"],
-                 full = TRUE,
-                 quiet = TRUE)
-write_rds(sdm, here("tmp", "sdm.rds"))
-
-
-# Predict -----------------------------------------------------------------
-
-m_nat_layer <- predict(object = sdm,
-                       x.layers = prediction_raster,
-                       quantiles = c(0.025, 0.975),
-                       splitby = 20)

@@ -22,6 +22,14 @@ source(here("R", "prep_analysis.R"))
 
 source(here("R", "run_models.R"))
 
+# produce a higher resolution raster for final predictions
+
+source(here("R", "high_res_raster.R"))
+
+# produce a lower resolution raster to test predictions on
+
+source(here("R", "low_res_raster.R"))
+
 # produce predictive maps
 
 source(here("R", "produce_predictions.R"))

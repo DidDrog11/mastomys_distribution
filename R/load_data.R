@@ -206,9 +206,13 @@ if(!file.exists(here("data", "covariate_raster_names.rds"))) {
     WA_land_cover <- rast(here("data", "land_cover", "WA_land_cover.tif"))
     crs(WA_land_cover) <- project_crs
     
+    test <- WA_land_cover[[1]] %>%
+      segregate()
+    
     WA_land_cover$land_cover <- classify(WA_land_cover$land_cover, classification_raster)
     levels(WA_land_cover$land_cover) <- c(land_use_categories)
     
+    test_2 <- segregate(WA_land_cover$land_cover)
   }
   
   # NDVI https://lpdaac.usgs.gov/products/myd13c2v061/
@@ -263,17 +267,15 @@ if(!file.exists(here("data", "covariate_raster_names.rds"))) {
   
   NDVI_stack <- stack(WA_ndvi)
   
-  all_vars <- stack(x = c(bioclim_stack, elevation, WA_population, WA_land_cover))
-  all_var_stack <- stack(x = c(all_vars, NDVI_stack))
-  write_rds(names(all_var_stack), here("data", "covariate_raster_names.rds"))
-  writeRaster(all_var_stack, here("data", "covariate_raster.grd"), format = "raster", overwrite = TRUE)
+  all_vars <- c(bioclim_stack, elevation, WA_population, WA_land_cover, rast(NDVI_stack))
+  write_rds(names(all_vars), here("data", "covariate_raster_names.rds"))
+  writeRaster(all_vars, here("data", "covariate_raster.tif"), overwrite = TRUE)
   
   removeTmpFiles(h = 0)
   
 } else {
   
-  covariate_raster <- rast(here("data", "covariate_raster.grd"))
-  covariate_raster <- stack(covariate_raster)
+  covariate_raster <- rast(here("data", "covariate_raster.tif"))
   crs(covariate_raster) <- project_crs
   
 }
