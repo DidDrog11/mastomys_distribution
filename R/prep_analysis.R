@@ -88,9 +88,5 @@ abs_cov <- tibble(abs_cov) %>%
 
 # We now bring them together
 combined_cov <- bind_rows(pres_cov, abs_cov) %>%
-  drop_na() %>%
-  mutate(land_cover = recode_factor(land_cover, !!!land_use_categories),
-         log_pop_density = log10(pop_density)) %>%
-  dummy_cols(select_columns = "land_cover", remove_selected_columns = TRUE) %>%
-  select(-ID, -pop_density)
-# And remove any with missing data, dummy coding landuse and transforming pop_density to log
+  drop_na()
+# And remove any with missing data and transforming pop_density to log

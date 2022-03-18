@@ -8,32 +8,17 @@ land_use_categories <- c("no_data", rep("agriculture", 6), rep("forest", 5), "gr
                          rep("forest", 2), "wetland", "urban", rep("bare_areas", 2), "water")
 
 classification_raster <- matrix(c(0, 0, 0, # no data
-                                  0, 39, 1, # agriculture
-                                  10, 11, 2, # agriculture
-                                  11, 12, 3, # agriculture
-                                  12, 20, 4, # agriculture
-                                  20, 30, 5, # agriculture
-                                  30, 40, 6, # agriculture
-                                  40, 50, 7, # forest
-                                  50, 60, 8, # forest
-                                  60, 61, 9, # forest
-                                  61, 62, 10, # forest
-                                  62, 100, 11, # forest
-                                  100, 110, 12, # grassland
-                                  110, 120, 13, # shrubland
-                                  120, 122, 14, # shrubland
-                                  122, 130, 15, # shrubland
-                                  130, 150, 16, # grassland
-                                  150, 152, 17, # sparse vegetation
-                                  152, 153, 18, # sparse vegetation
-                                  153, 160, 19, # sparse vegetation
-                                  160, 169, 20, # forest
-                                  170, 179, 21, # forest
-                                  180, 189, 22, # wetland
-                                  190, 199, 23, # urban
-                                  199, 201, 24, # bare
-                                  201, 202, 25, # bare
-                                  202, 255, 26), # water
+                                  1, 49, 1, # agriculture
+                                  49, 109, 2, # forest
+                                  109, 119, 3, # grassland
+                                  119, 129, 4, # shrubland
+                                  129, 139, 3, # grassland
+                                  139, 159, 5, # sparse vegetation
+                                  159, 179, 2, # forest
+                                  179, 189, 6, # wetland
+                                  189, 199, 7, # urban
+                                  199, 202, 8, # bare
+                                  202, 255, 9), # water
                                 ncol = 3, byrow = TRUE)
 
 names(land_use_categories) <- c(classification_raster[,3])

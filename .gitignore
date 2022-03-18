@@ -39,4 +39,15 @@ vignettes/*.pdf
 .Renviron
 
 # Data folder
-data
+data/*
+!data/lr_covariate_raster.tif
+!data/combined_cov.rds
+
+# tmp data folder
+tmp/*
+!tmp/sdm.rds
+!tmp/sdm_1.rds
+!tmp/m_nat_raster_lr_0.grd
+!tmp/m_nat_raster_lr_0.gri
+!tmp/m_nat_raster_lr_1.grd
+!tmp/m_nat_raster_lr_1.gri

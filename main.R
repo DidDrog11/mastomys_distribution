@@ -30,6 +30,10 @@ source(here("R", "high_res_raster.R"))
 
 source(here("R", "low_res_raster.R"))
 
-# produce predictive maps
+# produce predictive raster
 
 source(here("R", "produce_predictions.R"))
+
+# explore predictions
+
+source(here("R", "explore_predictions.R"))

@@ -2,18 +2,7 @@
 
 if(!file.exists(here("data", "covariate_raster.tif"))) {
 
-land_cover_dummy_rast <- covariate_raster[["land_cover"]] %>%
-  classify(simplified_landuse, include.lowest = TRUE) %>%
-  segregate()
-
-names(land_cover_dummy_rast) <- all_vars[str_detect(all_vars, "land_cover")]
-
-prediction_raster <- subset(covariate_raster, c(1:21, 23:35))
-prediction_raster$log_pop_density <- log10(prediction_raster$pop_density)
-
-prediction_raster <- stack(prediction_raster, stack(land_cover_dummy_rast))
-
-writeRaster(prediction_raster, here("data", "covariate_raster.tif"))
+writeRaster(covariate_raster, here("data", "covariate_raster.tif"), overwrite = T)
 
 } else {
   

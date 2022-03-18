@@ -25,7 +25,7 @@ WA_shape <- lapply(list.files(here("data", "spatial"), full.names = TRUE), funct
   bind_rows()
 
 # read or create all covariate raster
-if(!file.exists(here("data", "covariate_raster_names.rds"))) {
+if(!file.exists(here("data", "covariate_raster_full.tif"))) {
   # covariates including climate data from bioclim, elevation, landuse data, human population density
   
   # bioclim at 30s resolution has been obtained from her https://biogeo.ucdavis.edu/data/worldclim/v2.1/base/wc2.1_30s_bio.zip
@@ -118,7 +118,7 @@ if(!file.exists(here("data", "covariate_raster_names.rds"))) {
   
   # gridded population of the world https://sedac.ciesin.columbia.edu/data/collection/gpw-v4
   
-  if(!file.exists(here("data", "WA_population.tif"))) {
+  if(!file.exists(here("data", "gridded_pop", "WA_population.tif"))) {
     
     global_pop <- rast(here("data", "gridded_pop", "gpw_v4_population_density_adjusted_to_2015_unwpp_country_totals_rev11_2020_30_sec.tif"))
     
@@ -192,32 +192,35 @@ if(!file.exists(here("data", "covariate_raster_names.rds"))) {
   
   # land cover https://cds.climate.copernicus.eu/cdsapp#!/home
   
-  if(!file.exists(here("data", "land_cover", "WA_land_cover.tif"))) {
+  if(!file.exists(here("data", "land_cover", "WA_land_cover_binary.tif"))) {
     
     land_cover <- rast(here("data", "land_cover", "C3S-LC-L4-LCCS-Map-300m-P1Y-2020-v2.1.1.nc"))
     land_cover <- c(land_cover[[1]], land_cover[[5]])
     names(land_cover) <- c("land_cover", "land_use_change_count")
     crs(land_cover) <- project_crs
-    WA_land_cover <- crop(land_cover, extent(WA_shape)) %>%
-      writeRaster(., here("data", "land_cover", "WA_land_cover.tif"), overwrite = TRUE)
+    WA_land_cover <- crop(land_cover, extent(WA_shape))
+    
+    source(here("R", "project_wide_values.R"))
+    
+    binary_land_cover <- classify(WA_land_cover$land_cover, classification_raster) %>%
+      segregate()
+    
+    names(binary_land_cover) <- c("agriculture", "forest", "grassland", "shrubland", "sparse_vegetation", "wetland", "urban", "bare", "water")
+    
+    WA_land_cover_bin <- c(binary_land_cover, WA_land_cover$land_use_change_count)
+    
+    writeRaster(WA_land_cover_bin, here("data", "land_cover", "WA_land_cover_binary.tif"), overwrite = TRUE)
     
   } else {
     
-    WA_land_cover <- rast(here("data", "land_cover", "WA_land_cover.tif"))
+    WA_land_cover <- rast(here("data", "land_cover", "WA_land_cover_binary.tif"))
     crs(WA_land_cover) <- project_crs
     
-    test <- WA_land_cover[[1]] %>%
-      segregate()
-    
-    WA_land_cover$land_cover <- classify(WA_land_cover$land_cover, classification_raster)
-    levels(WA_land_cover$land_cover) <- c(land_use_categories)
-    
-    test_2 <- segregate(WA_land_cover$land_cover)
   }
   
   # NDVI https://lpdaac.usgs.gov/products/myd13c2v061/
   
-  if(!file.exists(here("data", "ndvi", "WA_monthly_ndvi.tif"))) {
+  if(!file.exists(here("data", "ndvi", "WA_ndvi_monthly.tif"))) {
     
     list_ndvi <- list.files(here("data", "ndvi"))[2:13]
     
@@ -242,6 +245,9 @@ if(!file.exists(here("data", "covariate_raster_names.rds"))) {
   } else {
     
     WA_ndvi <- rast(here("data", "ndvi", "WA_ndvi_monthly.tif"))
+    
+    WA_ndvi$c_v_ndvi <- rast(cv(as(WA_ndvi, "Raster")))
+    
     crs(WA_ndvi) <- project_crs
     
   }
@@ -262,20 +268,21 @@ if(!file.exists(here("data", "covariate_raster_names.rds"))) {
   bioclim_stack <- resample(bioclim_stack, bioclim_stack)
   elevation <- resample(elevation, bioclim_stack)
   WA_population <- resample(WA_population, bioclim_stack)
-  WA_land_cover <- resample(WA_land_cover, bioclim_stack)
+  WA_land_cover <- resample(WA_land_cover, bioclim_stack, method = "near")
   WA_ndvi <- resample(WA_ndvi, bioclim_stack)
   
-  NDVI_stack <- stack(WA_ndvi)
-  
   all_vars <- c(bioclim_stack, elevation, WA_population, WA_land_cover, rast(NDVI_stack))
+  
+  all_vars$log_pop_density <- log10(all_vars$pop_density)
+  
   write_rds(names(all_vars), here("data", "covariate_raster_names.rds"))
-  writeRaster(all_vars, here("data", "covariate_raster.tif"), overwrite = TRUE)
+  writeRaster(all_vars, here("data", "covariate_raster_full.tif"), overwrite = TRUE)
   
   removeTmpFiles(h = 0)
   
 } else {
   
-  covariate_raster <- rast(here("data", "covariate_raster.tif"))
+  covariate_raster <- rast(here("data", "covariate_raster_full.tif"))
   crs(covariate_raster) <- project_crs
   
 }
