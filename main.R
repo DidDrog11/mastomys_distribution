@@ -24,7 +24,7 @@ source(here("R", "run_models.R"))
 
 # produce a higher resolution raster for final predictions
 
-source(here("R", "high_res_raster.R"))
+# source(here("R", "high_res_raster.R"))
 
 # produce a lower resolution raster to test predictions on
 
@@ -37,3 +37,9 @@ source(here("R", "produce_predictions.R"))
 # explore predictions
 
 source(here("R", "explore_predictions.R"))
+sdm_0_output <- explore_predictions(prediction_raster = m_nat_layer_lr_0, name = "sdm_0")
+
+
+# INLA
+
+source(here("R", "inla.R"))

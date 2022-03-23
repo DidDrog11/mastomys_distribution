@@ -26,6 +26,7 @@ WA_shape <- lapply(list.files(here("data", "spatial"), full.names = TRUE), funct
 
 # read or create all covariate raster
 if(!file.exists(here("data", "covariate_raster_full.tif"))) {
+  
   # covariates including climate data from bioclim, elevation, landuse data, human population density
   
   # bioclim at 30s resolution has been obtained from her https://biogeo.ucdavis.edu/data/worldclim/v2.1/base/wc2.1_30s_bio.zip
@@ -280,7 +281,9 @@ if(!file.exists(here("data", "covariate_raster_full.tif"))) {
   
   removeTmpFiles(h = 0)
   
-} else {
+} 
+
+if(file.exists(here("data", "covariate_raster_full.tif"))) {
   
   covariate_raster <- rast(here("data", "covariate_raster_full.tif"))
   crs(covariate_raster) <- project_crs

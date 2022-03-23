@@ -27,6 +27,7 @@ pkgs =
     "scales",
     "embarcadero",
     "reshape",
-    "fastDummies"
+    "fastDummies",
+    "INLA"
   )
 pacman::p_load(pkgs, character.only = T)
