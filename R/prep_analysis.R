@@ -52,6 +52,16 @@ rm(list = c("tmp_combined", "vect_combined"))
 # Combining these datasets gives us 634 cells of presence
 nrow(pts_combined)
 
+# Basinski presence
+vect_bas <- vect(bas_presence)
+
+tmp_bas <- rasterize(vect_bas, terra_raster[[1]], fun = "min", field = "m_nat")
+
+pts_bas <- as.points(tmp_bas)
+
+rm(list = c("tmp_bas", "vect_bas"))
+
+nrow(pts_bas)
 
 # Combined data -----------------------------------------------------------
 
@@ -88,5 +98,44 @@ abs_cov <- tibble(abs_cov) %>%
 
 # We now bring them together
 combined_cov <- bind_rows(pres_cov, abs_cov) %>%
+  drop_na()
+# And remove any with missing data and transforming pop_density to log
+
+
+# Basinski enriched -------------------------------------------------------
+
+all_pres <- rbind(pts_combined, pts_bas) %>%
+  unique()
+
+all_pres_cov <- terra::extract(terra_raster, all_pres)
+
+tmp_st_absence <- st_as_sf(pts_m_nat_absence)
+tmp_st_presence <- st_as_sf(all_pres)
+
+# This leaves us with 248 distinct absences
+tmp_st_absence <- tmp_st_absence %>%
+  filter(!geometry %in% tmp_st_presence$geometry)
+
+all_abs <- vect(tmp_st_absence)
+
+rm(list = c("tmp_st_absence", "tmp_st_presence"))
+
+n_additional_points <- nrow(all_pres) - nrow(all_abs)
+
+pts_absence_all <- rbind(all_abs,
+                     vect(randomPoints(raster(terra_raster[[1]]), n_additional_points), crs = project_crs))
+
+# Extract our covariates at each point
+all_abs_cov <- terra::extract(terra_raster, pts_absence_all)
+
+# We then add the response variable to each of these covariate dataframes
+all_pres_cov <- tibble(all_pres_cov) %>%
+  mutate(m_nat = 1)
+
+all_abs_cov <- tibble(all_abs_cov) %>%
+  mutate(m_nat = 0)
+
+# We now bring them together
+all_cov <- bind_rows(all_pres_cov, all_abs_cov) %>%
   drop_na()
 # And remove any with missing data and transforming pop_density to log

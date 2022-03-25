@@ -38,7 +38,16 @@ source(here("R", "produce_predictions.R"))
 
 source(here("R", "explore_predictions.R"))
 sdm_0_output <- explore_predictions(prediction_raster = m_nat_layer_lr_0, name = "sdm_0")
+sdm_1_output <- explore_predictions(prediction_raster = m_nat_layer_lr_1, name = "sdm_1")
+sdm_2_output <- explore_predictions(prediction_raster = m_nat_layer_lr_2, name = "sdm_2")
 
+# compare models
+
+source(here("R", "compare_sdm.R"))
+
+# partial dependence plots
+
+source(here("R", "partial_dependence.R"))
 
 # INLA
 

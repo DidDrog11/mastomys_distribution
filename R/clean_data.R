@@ -77,3 +77,14 @@ gbif_presence <- gbif_data %>%
 # Combine m_nat_presence and gbif_presence
 
 combined_presence <- bind_rows(m_nat_presence, gbif_presence)
+
+# clean basinski presence data
+
+bas_presence <- bas_data %>%
+  dplyr::rename("iso3c" = country_code, "x" = longitude, "y" = latitude) %>%
+  filter(iso3c %in% WA_countries) %>%
+  st_as_sf(coords = c("x", "y"), remove = FALSE) %>%
+  mutate(m_nat = 1) %>%
+  select(species, iso3c, geometry, x, y, m_nat)
+
+all_presence <- bind_rows(combined_presence, bas_presence)

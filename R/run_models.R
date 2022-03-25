@@ -1,3 +1,5 @@
+combined_cov <- read_rds(here("data", "combined_cov.rds"))
+
 
 # First model
 all_vars <- names(combined_cov)[!(names(combined_cov) %in% c("m_nat", "ID", "pop_density"))]
@@ -42,7 +44,7 @@ selected_vars <- names(combined_cov)[(names(combined_cov) %in% c("mean_temperatu
 
 if(!file.exists(here("tmp", "sdm_1.rds"))) {
   
-  # Automated variable selection
+  # Automated variable selection on subset
   sdm_1 <- bart.step(x.data = combined_cov[ ,selected_vars],
                      y.data = combined_cov[, "m_nat"],
                      full = TRUE,
@@ -59,3 +61,26 @@ if(!file.exists(here("tmp", "sdm_1.rds"))) {
 # Assess variable importance ----------------------------------------------
 
 varimp(sdm_1, plots = TRUE)
+
+
+# Run model ---------------------------------------------------------------
+# Run model SDM_1 on the data enriched with basinski
+
+if(!file.exists(here("tmp", "sdm_2.rds"))) {
+  
+  # Automated variable selection on subset
+  sdm_2 <- bart.step(x.data = all_cov[ ,selected_vars],
+                     y.data = all_cov[, "m_nat"],
+                     full = TRUE,
+                     quiet = TRUE)
+  write_rds(sdm_2, here("tmp", "sdm_2.rds"))
+  
+} else {
+  
+  sdm_2 <- read_rds(here("tmp", "sdm_2.rds"))
+  
+}
+
+# Assess variable importance ----------------------------------------------
+
+varimp(sdm_2, plots = TRUE)

@@ -32,6 +32,20 @@ if(!file.exists(here("tmp", "m_nat_raster_lr_1.grd"))) {
   
 }
 
+if(!file.exists(here("tmp", "m_nat_raster_lr_2.grd"))) {
+  
+  m_nat_layer_lr_2 <- predict(object = sdm_2,
+                              x.layers = lr_prediction_stack,
+                              quantiles = c(0.025, 0.975),
+                              splitby = 20)
+  writeRaster(m_nat_layer_lr_2, here("tmp", "m_nat_raster_lr_2.grd")) 
+  
+} else {
+  
+  m_nat_layer_lr_2 <- rast(here("tmp", "m_nat_raster_lr_2.grd"))
+  
+}
+
 # Produce high resolution predictions -------------------------------------
 
 # if(!file.exists(here("tmp", "m_nat_raster_hr.grd"))) {

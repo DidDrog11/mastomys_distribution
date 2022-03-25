@@ -12,6 +12,13 @@ rodent_data <- read_xlsx(here("data", "downloaded_data.xlsx"), sheet = "trapping
 gbif_data <- read_tsv(here("data", "mastomys_natalensis_gbif.csv")) %>%
   select(gbifID, species, countryCode, decimalLatitude, decimalLongitude)
 
+# basinski data
+bas_data <- read_xlsx(here("data", "mastomys_natalensis_basinski.xlsx"), sheet = 2) %>%
+  select(country = Country, latitude = Latitude, longitude = Longitude, species = Species) %>%
+  mutate(country_code = countrycode(country, origin = "country.name", destination = "iso3c"),
+         latitude = as.numeric(latitude),
+         longitude = as.numeric(longitude))
+
 # shapefiles of the study area
 
 for(i in 1:length(WA_countries)) {
