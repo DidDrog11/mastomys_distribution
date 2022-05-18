@@ -4,6 +4,7 @@ Species distribution modelling for Mastomys natalensis
 # Environmental variables
 
 | Variable  | Source  | Resolution  |
+| ##### | ### | ##### |
 | mean_temperature  | bioclim 2.1 | ~ 1 km^2^ |
 | mean_dirunal_range  | bioclim 2.1 | ~ 1 km^2^ |
 | isothermality  | bioclim 2.1 | ~ 1 km^2^ |
