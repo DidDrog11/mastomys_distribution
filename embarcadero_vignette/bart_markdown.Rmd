@@ -24,6 +24,8 @@ In this advanced tutorial, I'm going to assume that you've seen the main paper a
 ```{r setup, echo=FALSE, message=FALSE}
 
 library(embarcadero)
+library(here)
+library(reshape)
 set.seed(12345)
 ```
 
@@ -70,7 +72,7 @@ Let's read in the covariates.
 
 ```{r load-climate}
 
-load(file = "~/pier39/covsraw.rda")
+load(file = here("embarcadero_vignette", "data", "covsraw.rda"))
 covs <- covsraw
 class(covs)
 covs@crs <- crs('+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0')
@@ -80,7 +82,7 @@ Next, let's load in our tick occurrence dataset, which is a set of longitude/lat
 
 ```{r load-ticks}
 
-load(file = "~/pier39/ticks.rda")
+load(file = here("embarcadero_vignette", "data", "ticks.rda"))
 head(ticks)
 nrow(ticks)
 ```
@@ -105,7 +107,7 @@ pts.sp1 <- rasterToPoints(tmp,
 nrow(pts.sp1)
 
 # Extract the climate data at each point
-pres.cov <- raster::extract(covs, pts.sp1[, 1:2])
+pres.cov <- terra::extract(covs, pts.sp1[, 1:2])
 head(pres.cov)
 ```
 
@@ -211,7 +213,7 @@ xvars <- c(xvars, 'hytr')
 
 # Read in the data
 
-load(file = "~/pier39/cchf.rda")
+load(file = here("embarcadero_vignette", "data", "cchf.rda"))
 head(cchf)
 nrow(cchf)
 
@@ -413,7 +415,7 @@ partial(cchf.model,
 
 # Let's do a few at once
 partial(cchf.model,
-  c('bio1', 'bio5', 'bio6', 'bio12'),
+  c('bio12', 'bio13', 'bio6', 'ndvi.mean'),
   trace = FALSE,
   ci = TRUE,
   panel = TRUE,
@@ -438,11 +440,11 @@ One last cool trick: spatial partial dependence plots
 
 ```{r cchf-spartial}
 
-sp.bio1 <- spartial(cchf.model, covs, x.vars = 'bio1', equal = TRUE)
-plot(sp.bio1, 
+sp.bio12 <- spartial(cchf.model, covs, x.vars = 'bio12', equal = TRUE)
+plot(sp.bio12, 
      box = FALSE,
      axes = FALSE,
-     main = 'Spartial plot: bio1',
+     main = 'Spartial plot: bio12',
      #zlim = c(0,1),
      #axis.args=list(at=pretty(0:1), labels=pretty(0:1)),
      legend.args=list(text='Partial effect', side=2, line=1.3))
